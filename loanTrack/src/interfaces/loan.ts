@@ -9,6 +9,7 @@ export interface CreateLoanPayload {
 
 export interface LoanRecord extends CreateLoanPayload {
   loanId: string;
+  owner: string;
   emi: number;
   totalInterest: number;
   totalPayment: number;

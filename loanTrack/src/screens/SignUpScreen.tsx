@@ -29,11 +29,12 @@ const SignUpScreen = ({ navigation }: any) => {
       setLoading(true);
       setErrorMessage('');
 
+      const normalizedEmail = email.trim().toLowerCase();
       await Auth.signUp({
-        username: email,
+        username: normalizedEmail,
         password,
         attributes: {
-          email,
+          email: normalizedEmail,
           phone_number: phoneNumber,
           given_name: firstName,
           family_name: lastName,
