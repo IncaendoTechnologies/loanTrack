@@ -1,0 +1,228 @@
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+
+import AppText from '../components/AppText';
+import { COLORS } from '../theme/colors';
+
+const ApplyLoanScreen = ({ navigation }: any) => {
+  const [amount, setAmount] = useState('');
+  const [interest, setInterest] = useState('');
+  const [duration, setDuration] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const calculateEMI = async () => {
+    setErrorMessage('');
+    const p = parseFloat(amount);
+    const r = parseFloat(interest) / 12 / 100;
+    const n = parseFloat(duration);
+
+    if (!p || !r || !n) {
+      const message = 'Please enter valid amount, interest rate, and duration.';
+      setErrorMessage(message);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const emi =
+        (p * r * Math.pow(1 + r, n)) /
+        (Math.pow(1 + r, n) - 1);
+
+      const totalPayment = emi * n;
+      const totalInterest = totalPayment - p;
+
+      const loanData = {
+        amount: p,
+        interestRate: parseFloat(interest),
+        duration: n,
+        emi: Math.round(emi),
+        totalInterest: Math.round(totalInterest),
+        totalPayment: Math.round(totalPayment),
+      };
+
+      navigation.navigate('EmiResult', {
+        loan: loanData,
+        isNew: true,
+      });
+    } catch (error) {
+      const message = (error as any)?.message || 'Unable to calculate loan. Please try again.';
+      setErrorMessage(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      
+      {/* HEADER */}
+      <View style={styles.header}>
+        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={22} color={COLORS.primary} />
+        </TouchableOpacity> */}
+
+        <AppText style={styles.title}>Apply Loan</AppText>
+      </View>
+
+      {/* FORM CARD */}
+      <View style={styles.card}>
+        <AppText style={styles.cardTitle}>Loan Details</AppText>
+
+        {/* Amount */}
+        <View style={styles.inputGroup}>
+          <AppText style={styles.label}>Loan Amount (₹)</AppText>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 100000"
+            keyboardType="numeric"
+            value={amount}
+            onChangeText={setAmount}
+          />
+        </View>
+
+        {/* Interest */}
+        <View style={styles.inputGroup}>
+          <AppText style={styles.label}>Interest Rate (%)</AppText>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 10.5"
+            keyboardType="numeric"
+            value={interest}
+            onChangeText={setInterest}
+          />
+        </View>
+
+        {/* Duration */}
+        <View style={styles.inputGroup}>
+          <AppText style={styles.label}>Loan Duration (Months)</AppText>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 12"
+            keyboardType="numeric"
+            value={duration}
+            onChangeText={setDuration}
+          />
+        </View>
+
+        {/* BUTTON */}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={calculateEMI}
+          disabled={loading}
+        >
+          <Ionicons name="calculator" size={18} color="#fff" />
+          <AppText style={styles.buttonText}>{loading ? 'Calculating...' : 'Calculate EMI'}</AppText>
+        </TouchableOpacity>
+
+        {errorMessage ? <AppText style={styles.errorText}>{errorMessage}</AppText> : null}
+      </View>
+
+      {/* NOTE */}
+      <View style={styles.noteBox}>
+        <AppText style={styles.noteText}>
+          <AppText style={{ fontWeight: 'bold' }}>Note: </AppText>
+          This is a simulation. Actual loan terms may vary based on credit score and bank policies.
+        </AppText>
+      </View>
+    </ScrollView>
+  );
+};
+
+export default ApplyLoanScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    padding: 16,
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
+
+  card: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.primary,
+    marginBottom: 16,
+  },
+
+  inputGroup: {
+    marginBottom: 16,
+  },
+
+  label: {
+    marginBottom: 6,
+    fontSize: 13,
+    color: '#555',
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 14,
+    backgroundColor: '#fff',
+  },
+
+  button: {
+    backgroundColor: COLORS.primary,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: '#6c757d',
+  },
+
+  buttonText: {
+    color: '#fff',
+    marginLeft: 6,
+    fontWeight: '600',
+  },
+  errorText: {
+    color: '#DC2626',
+    marginTop: 10,
+    fontSize: 13,
+  },
+
+  noteBox: {
+    marginTop: 20,
+    backgroundColor: '#EEF2FF',
+    padding: 12,
+    borderRadius: 10,
+  },
+
+  noteText: {
+    fontSize: 12,
+    color: '#444',
+  },
+});

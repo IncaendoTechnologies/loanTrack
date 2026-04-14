@@ -1,0 +1,37 @@
+import React from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+
+const svgMarkup = `
+<svg width="200" height="100" viewBox="10 0 350 165" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="gradient_path" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#22C55E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563EB;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(100, 20)">
+    <path d="M0 80 L30 50 L60 80 L120 20 L130 30 L60 100 L0 80 Z" fill="url(#gradient_path)"/>
+    <path d="M0 80 L10 70 L60 100 Z" fill="#22C55E" opacity="0.6"/>
+    <path d="M120 20 L130 30 L60 100 Z" fill="#2563EB" opacity="0.6"/>
+  </g>
+
+  <g transform="translate(100, 160)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-weight="700" font-size="44" fill="#0F172A">loan</text>
+    <text x="100" y="0" font-family="Arial, sans-serif" font-weight="400" font-size="44" fill="#64748B">Track</text>
+  </g>
+</svg>
+`;
+
+interface LoanTrackLogoProps {
+  width?: number;
+  height?: number;
+  style?: StyleProp<ViewStyle>;
+}
+
+const LoanTrackLogo = ({ width = 140, height = 70, style }: LoanTrackLogoProps) => {
+  return <SvgXml xml={svgMarkup} width={width} height={height} style={style} />;
+};
+
+export default LoanTrackLogo;
