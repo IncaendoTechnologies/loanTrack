@@ -1,6 +1,7 @@
 export interface Loan {
   loanId: string;
   userId: string;
+  owner: string;
 
   amount: number;
   interestRate: number;

@@ -5,16 +5,16 @@ import {
     ActivityIndicator,
     Alert,
     ScrollView,
-    StyleSheet,
     TouchableOpacity,
     View,
 } from 'react-native';
 
-import { getUserById } from '../apis/userApi';
+import { createUser, getUserById, getUserByIdOrNull } from '../apis/userApi';
 import { UserRecord } from '../interfaces/index';
 import AppText from '../components/AppText';
-import { clearSessionToken } from '../services/session';
+import type { CognitoUser } from '../types/types';
 import { COLORS } from '../theme/colors';
+import styles from '../stylesheets/ProfileStyles';
 
 const ProfileScreen = ({ navigation }: any) => {
   const [user, setUser] = useState<UserRecord | null>(null);
@@ -26,29 +26,59 @@ const ProfileScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const createBackendUser = async (cognitoUser: CognitoUser) => {
+    const payload = {
+      id: cognitoUser.attributes.sub,
+      owner: cognitoUser.attributes.sub,
+      email: cognitoUser.attributes.email,
+      phoneNumber: cognitoUser.attributes.phone_number,
+      firstName: cognitoUser.attributes.given_name,
+      lastName: cognitoUser.attributes.family_name,
+    };
+
+    if (!payload.email || !payload.phoneNumber || !payload.firstName || !payload.lastName) {
+      console.log('Cannot create backend user from Cognito: missing attributes', payload);
+      return null;
+    }
+
+    try {
+      return await createUser(payload);
+    } catch (createError) {
+      console.log('Failed to create backend user in ProfileScreen:', createError);
+      return null;
+    }
+  };
+
   const loadUser = async () => {
     try {
       setLoading(true);
       setError('');
-      const cognitoUser = await Auth.currentAuthenticatedUser();
-      const cognitoSub = cognitoUser?.attributes?.sub as string;
+      const cognitoUser = (await Auth.currentAuthenticatedUser()) as CognitoUser;
+      const cognitoSub = cognitoUser.attributes.sub;
       setCognitoProfile({
-        firstName: cognitoUser?.attributes?.given_name,
-        lastName: cognitoUser?.attributes?.family_name,
-        email: cognitoUser?.attributes?.email,
+        firstName: cognitoUser.attributes.given_name,
+        lastName: cognitoUser.attributes.family_name,
+        email: cognitoUser.attributes.email,
       });
-      const profile = await getUserById(cognitoSub);
-      setUser(profile);
+
+      let profile = await getUserByIdOrNull(cognitoSub);
+      if (!profile) {
+        profile = await createBackendUser(cognitoUser);
+      }
+
+      if (profile) {
+        setUser(profile);
+      }
     } catch (err) {
       setError(String(err));
       // keep Cognito profile as fallback even if backend call fails
       if (!cognitoProfile) {
         try {
-          const cognitoUser = await Auth.currentAuthenticatedUser();
+          const cognitoUser = (await Auth.currentAuthenticatedUser()) as CognitoUser;
           setCognitoProfile({
-            firstName: cognitoUser?.attributes?.given_name,
-            lastName: cognitoUser?.attributes?.family_name,
-            email: cognitoUser?.attributes?.email,
+            firstName: cognitoUser.attributes.given_name,
+            lastName: cognitoUser.attributes.family_name,
+            email: cognitoUser.attributes.email,
           });
         } catch {
           // ignore fallback error
@@ -69,7 +99,6 @@ const ProfileScreen = ({ navigation }: any) => {
     } catch (error) {
       console.log('Cognito signOut error:', error);
     } finally {
-      await clearSessionToken();
       navigation.reset({
         index: 0,
         routes: [{ name: 'SignIn' }],
@@ -153,118 +182,3 @@ const ProfileScreen = ({ navigation }: any) => {
 };
 
 export default ProfileScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
-  },
-
-  header: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: '700',
-  },
-
-  name: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: '600',
-    color: COLORS.primary,
-  },
-
-  email: {
-    fontSize: 13,
-    color: '#777',
-    marginTop: 4,
-  },
-
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginTop: 20,
-    paddingVertical: 10,
-  },
-
-  cardTitle: {
-    fontSize: 12,
-    color: '#888',
-    paddingHorizontal: 16,
-    marginBottom: 10,
-  },
-
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
-  },
-
-  itemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  iconCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  itemText: {
-    marginLeft: 10,
-    fontSize: 14,
-  },
-
-  logoutBtn: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: '#FCA5A5',
-    padding: 12,
-    borderRadius: 10,
-  },
-
-  logoutText: {
-    color: '#DC2626',
-    marginLeft: 6,
-    fontWeight: '600',
-  },
-
-  footer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-
-  version: {
-    fontSize: 12,
-    color: '#999',
-  },
-  errorText: {
-    marginTop: 6,
-    color: '#DC2626',
-    fontSize: 12,
-    textAlign: 'center',
-  },
-});

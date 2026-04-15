@@ -1,8 +1,6 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const ACCESS_TOKEN_KEY = 'accessToken';
+import { getCognitoAccessToken } from '../services/session';
 
 const extractHost = (uri?: string) => uri?.split(':')[0];
 
@@ -102,7 +100,7 @@ export const requestWithFallback = async (path: string, init?: RequestInit) => {
   }
 
   let lastError: unknown;
-  const token = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = await getCognitoAccessToken();
   const headers = {
     ...(init?.headers as Record<string, string> | undefined),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),

@@ -7,9 +7,9 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { saveAccessTokenFromCognitoSession } from '../services/session';
-import { getUserByIdOrNull } from '../apis/userApi';
+import { createUser, getUserByIdOrNull } from '../apis/userApi';
 import LoanTrackLogo from '../components/LoanTrackLogo';
+import type { CognitoUser } from '../types/types';
 import styles from '../stylesheets/SignInStyles';
 
 const SignInScreen = ({ navigation }: any) => {
@@ -18,8 +18,36 @@ const SignInScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const ensureBackendUser = async (user: CognitoUser) => {
+    const cognitoSub = user.attributes.sub;
+    const existingProfile = await getUserByIdOrNull(cognitoSub);
+    if (existingProfile) return;
+
+    const payload = {
+      id: cognitoSub,
+      owner: cognitoSub,
+      email: user.attributes.email,
+      phoneNumber: user.attributes.phone_number,
+      firstName: user.attributes.given_name,
+      lastName: user.attributes.family_name,
+    };
+
+    if (!payload.email || !payload.phoneNumber || !payload.firstName || !payload.lastName) {
+      console.log('Cannot create backend user: missing Cognito attributes', payload);
+      return;
+    }
+
+    try {
+      await createUser(payload);
+    } catch (createError) {
+      console.log('Create backend user after sign-in error:', createError);
+    }
+  };
+
   const handleSignIn = async () => {
-    if (!email || !password) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
       setErrorMessage('Email and password are required.');
       return;
     }
@@ -27,20 +55,37 @@ const SignInScreen = ({ navigation }: any) => {
     try {
       setLoading(true);
       setErrorMessage('');
-      await Auth.signIn(email, password);
-      await saveAccessTokenFromCognitoSession();
-      const user = await Auth.currentAuthenticatedUser();
-      const cognitoSub = user?.attributes?.sub as string;
-
+      await Auth.signIn(normalizedEmail, password);
+      const user = (await Auth.currentAuthenticatedUser()) as CognitoUser;
+      await ensureBackendUser(user);
       navigation.replace('MainTabs');
-
-      getUserByIdOrNull(cognitoSub).catch((profileError) => {
-        console.log('Profile fetch warning:', profileError);
-      });
     } catch (error) {
-      console.log('SignIn Error:', error);
-      const message = (error as any)?.message || String(error);
+      const authError = error as any;
+      console.log('SignIn Error:', authError);
+
+      if (authError?.name === 'UserNotConfirmedException') {
+        navigation.navigate('ConfirmSignUp', { email: normalizedEmail, password });
+        return;
+      }
+
+      const message = authError?.message || String(error);
+      const isUnconfirmed =
+        authError?.name === 'UserNotConfirmedException' ||
+        (authError?.name === 'NotAuthorizedException' &&
+          message?.toLowerCase().includes('not confirmed'));
+
+      if (isUnconfirmed) {
+        try {
+          await Auth.resendSignUp(normalizedEmail);
+        } catch (resendError) {
+          console.log('Resend sign-up error:', resendError);
+        }
+        navigation.navigate('ConfirmSignUp', { email: normalizedEmail, password });
+        return;
+      }
+
       setErrorMessage(message);
+
       Alert.alert('Error', 'Unable to sign in. Please check your details.');
     } finally {
       setLoading(false);

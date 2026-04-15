@@ -52,6 +52,7 @@ export const createLoan = async (req: Request, res: Response) => {
     const loan: Loan = {
       loanId: uuidv4(),
       userId,
+      owner: userId,
       amount,
       interestRate,
       duration,
