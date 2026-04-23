@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 
@@ -6,6 +6,7 @@ import ApplyLoanScreen from '../screens/ApplyLoanScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
+import TransactionScreen from '../screens/TransactionScreen';
 import { COLORS } from '../theme/colors';
 import { AppTabRoute } from '../enums';
 
@@ -27,14 +28,16 @@ const MainTabNavigator = () => {
           else if (route.name === AppTabRoute.Apply) iconName = 'cash';
           else if (route.name === AppTabRoute.Schedule) iconName = 'calendar';
           else if (route.name === AppTabRoute.Profile) iconName = 'person';
+          else if (route.name === AppTabRoute.Transaction) iconName = 'history';
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return iconName !== 'history' ? <Ionicons name={iconName} size={size} color={color} /> : <AntDesign name={iconName} size={size} color={color} />;
         },
       })}
     >
       <Tab.Screen name={AppTabRoute.Home} component={DashboardScreen} />
       <Tab.Screen name={AppTabRoute.Apply} component={ApplyLoanScreen} />
       <Tab.Screen name={AppTabRoute.Schedule} component={ScheduleScreen} />
+      <Tab.Screen name={AppTabRoute.Transaction} component={TransactionScreen} />
       <Tab.Screen name={AppTabRoute.Profile} component={ProfileScreen} />
     </Tab.Navigator>
   );

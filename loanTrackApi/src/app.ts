@@ -3,7 +3,7 @@ import express from "express";
 import { requireAuth } from "./middleware/auth";
 import loanRoutes from "./routes/loan";
 import userRoutes from "./routes/user";
-
+import transaction from "./routes/transaction";
 const app = express();
 
 app.use((req, res, next) => {
@@ -43,5 +43,6 @@ app.get("/health", (_req, res) => {
 
 app.use("/loans", requireAuth, loanRoutes);
 app.use("/users", requireAuth, userRoutes);
+app.use("/transactions", requireAuth, transaction);
 
 export default app;
