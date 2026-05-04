@@ -18,4 +18,6 @@ export interface UserInput {
   firstName: string;
   lastName: string;
   loanLimit?: number;
+  walletBalance: number;
+  usedLoanAmount: number;
 }

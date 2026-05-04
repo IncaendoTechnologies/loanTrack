@@ -10,6 +10,7 @@ import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import AppNavigator from './navigation/AppNavigator';
+import { AppStackRoute } from './enums/navigation';
 
 Amplify.configure(amplifyConfig);
 
@@ -20,11 +21,27 @@ export default function App() {
     PoppinsBold: require('./assets/fonts/Poppins-Bold.ttf'),
   });
 
+  const linking = {
+    prefixes: ['loantrack://'],
+    config: {
+      screens: {
+        [AppStackRoute.ConfirmPayment]: 'confirm-payment',
+        [AppStackRoute.Auth]: {
+          path: 'auth',
+          screens: {
+            [AppStackRoute.SignIn]: 'signin',
+            [AppStackRoute.SignUp]: 'signup'
+          }
+        }
+      },
+    },
+  };
+
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <AppNavigator />
         </NavigationContainer>
       </SafeAreaView>

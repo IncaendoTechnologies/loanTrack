@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
 import {
-    Alert,
+    ToastAndroid,
     ScrollView,
     TouchableOpacity,
     View,
@@ -51,7 +51,7 @@ const EmiResultScreen = ({ route, navigation }: any) => {
       console.log('Create Loan Error:', error);
       const message = 'Unable to save loan. Please try again.';
       setErrorMessage(message);
-      Alert.alert('Error', message);
+      ToastAndroid.show(`Error: ${message}`, ToastAndroid.SHORT);
     } finally {
       setLoading(false);
     }

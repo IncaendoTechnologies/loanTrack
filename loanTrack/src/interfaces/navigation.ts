@@ -1,3 +1,4 @@
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { LoanRecord } from './loan';
 
 export interface ConfirmSignUpParams {
@@ -17,11 +18,17 @@ export interface PaymentScheduleParams {
   loan: LoanRecord;
 }
 
-export type RootStackParamList = {
+export type AuthStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   ConfirmSignUp: ConfirmSignUpParams;
+};
+
+export type RootStackParamList = {
+  Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   MainTabs: undefined;
   EmiResult: EmiResultParams;
   PaymentSchedule: PaymentScheduleParams;
+  ConfirmPayment: undefined;
+  AddMoney: undefined;
 };

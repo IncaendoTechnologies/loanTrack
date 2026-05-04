@@ -3,7 +3,7 @@ import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
+    ToastAndroid,
     ScrollView,
     TouchableOpacity,
     View,
@@ -101,9 +101,9 @@ const ProfileScreen = ({ navigation }: any) => {
     } finally {
       navigation.reset({
         index: 0,
-        routes: [{ name: 'SignIn' }],
+        routes: [{ name: 'Auth' }],
       });
-      Alert.alert('Success', 'Logged out successfully.');
+      ToastAndroid.show('Success: Logged out successfully.', ToastAndroid.SHORT);
     }
   };
 
