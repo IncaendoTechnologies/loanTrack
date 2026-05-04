@@ -47,4 +47,42 @@ export class PaymentService {
     const result = await ddbDocClient.send(command);
     return result.Attributes as Transaction;
   }
+
+  async updateTransactionUserId(
+    transactionId: string,
+    fromUserId: string
+  ): Promise<Transaction | null> {
+    const command = new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { transactionId },
+      UpdateExpression: "SET fromUserId = :fromUserId, updatedAt = :updatedAt",
+      ExpressionAttributeValues: {
+        ":fromUserId": fromUserId,
+        ":updatedAt": new Date().toISOString(),
+      },
+      ReturnValues: "ALL_NEW",
+    });
+
+    const result = await ddbDocClient.send(command);
+    return result.Attributes as Transaction;
+  }
+
+  async updateTransactionOTP(
+    transactionId: string,
+    otp: string
+  ): Promise<Transaction | null> {
+    const command = new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { transactionId },
+      UpdateExpression: "SET otp = :otp, updatedAt = :updatedAt",
+      ExpressionAttributeValues: {
+        ":otp": otp,
+        ":updatedAt": new Date().toISOString(),
+      },
+      ReturnValues: "ALL_NEW",
+    });
+
+    const result = await ddbDocClient.send(command);
+    return result.Attributes as Transaction;
+  }
 }

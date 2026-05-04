@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Alert,
+  ToastAndroid,
   View,
   Text,
   TextInput,
@@ -10,10 +10,16 @@ import { Auth } from 'aws-amplify';
 import LoanTrackLogo from '../components/LoanTrackLogo';
 import styles from '../stylesheets/SignUpStyles';
 
-const SignUpScreen = ({ navigation }: any) => {
+const SignUpScreen = ({ navigation, route }: any) => {
+  React.useEffect(() => {
+    console.log('[SignUpScreen] Mounted with params:', route.params);
+  }, [route.params]);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(
+    route?.params?.fromEmail ? decodeURIComponent(route.params.fromEmail) : ''
+  );
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,12 +53,13 @@ const SignUpScreen = ({ navigation }: any) => {
         phoneNumber,
         firstName,
         lastName,
+        ...route.params
       });
     } catch (error) {
       console.log('SignUp Error:', error);
       const message = (error as any)?.message || String(error);
       setErrorMessage(message);
-      Alert.alert('Error', 'Unable to sign up. Please try again.');
+      ToastAndroid.show('Error: Unable to sign up. Please try again.', ToastAndroid.SHORT);
     } finally {
       setLoading(false);
     }

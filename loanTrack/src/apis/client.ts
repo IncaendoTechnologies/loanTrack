@@ -2,6 +2,8 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { getCognitoAccessToken } from '../services/session';
 
+const version = "/v1";
+
 const extractHost = (uri?: string) => uri?.split(':')[0];
 
 const resolveApiBaseUrl = () => {
@@ -109,10 +111,10 @@ export const requestWithFallback = async (path: string, init?: RequestInit) => {
 
   for (const baseUrl of candidates) {
     try {
-      return await fetchWithRetry(`${baseUrl}${path}`, requestInit);
+      return await fetchWithRetry(`${baseUrl}${version}${path}`, requestInit);
     } catch (error) {
       lastError = new Error(
-        `Network request failed at ${baseUrl}${path}: ${String(error)}`
+        `Network request failed at ${baseUrl}${version}${path}: ${String(error)}`
       );
     }
   }

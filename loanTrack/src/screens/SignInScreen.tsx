@@ -1,7 +1,7 @@
 import { Auth } from 'aws-amplify';
 import React, { useState } from 'react';
 import {
-    Alert,
+    ToastAndroid,
     Text,
     TextInput,
     TouchableOpacity,
@@ -86,7 +86,7 @@ const SignInScreen = ({ navigation }: any) => {
 
       setErrorMessage(message);
 
-      Alert.alert('Error', 'Unable to sign in. Please check your details.');
+      ToastAndroid.show('Error: Unable to sign in. Please check your details.', ToastAndroid.SHORT);
     } finally {
       setLoading(false);
     }

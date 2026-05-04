@@ -1,88 +1,86 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
+  ActivityIndicator
 } from 'react-native';
 import AppText from '../components/AppText';
 import { COLORS } from '../theme/colors';
+import { getTransactions, ApiTransaction } from '../apis/transactionApi';
 
-interface EmiPayment {
-  id: string;
-  transactionId: string;
-  loanId: string;
-  amount: number;
-  date: string; // ISO format
-  month: string;
-  status: 'Paid' | 'Pending' | 'Failed';
-}
+const STATUS_FILTERS = ['All', 'PAYMENT', 'DISBURSEMENT', 'WALLET_TRANSFER'] as const;
 
-const DUMMY_PAYMENTS: EmiPayment[] = [
-  { id: '1', transactionId: 'TXN202504010001', loanId: 'LN00123456', amount: 5200, date: '2025-04-01', month: 'Apr 2025', status: 'Paid' },
-  { id: '2', transactionId: 'TXN202503010002', loanId: 'LN00123456', amount: 5200, date: '2025-03-01', month: 'Mar 2025', status: 'Paid' },
-  { id: '3', transactionId: 'TXN202503150003', loanId: 'LN00789012', amount: 8750, date: '2025-03-15', month: 'Mar 2025', status: 'Pending' },
-  { id: '4', transactionId: 'TXN202502150004', loanId: 'LN00789012', amount: 8750, date: '2025-02-15', month: 'Feb 2025', status: 'Failed' },
-  { id: '5', transactionId: 'TXN202501200005', loanId: 'LN00345678', amount: 3400, date: '2025-01-20', month: 'Jan 2025', status: 'Paid' },
-  { id: '6', transactionId: 'TXN202412200006', loanId: 'LN00345678', amount: 3400, date: '2024-12-20', month: 'Dec 2024', status: 'Failed' },
-  { id: '7', transactionId: 'TXN202411010007', loanId: 'LN00123456', amount: 5200, date: '2024-11-01', month: 'Nov 2024', status: 'Paid' },
-];
-
-const STATUS_FILTERS = ['All', 'Paid', 'Pending', 'Failed'] as const;
-const MONTH_FILTERS = ['All', 'Apr 2025', 'Mar 2025', 'Feb 2025', 'Jan 2025', 'Dec 2024'] as const;
-
-const STATUS_CONFIG = {
-  Paid: { color: '#16A34A', bg: '#F0FDF4', icon: 'checkmark-circle' },
-  Pending: { color: '#D97706', bg: '#FFFBEB', icon: 'time-outline' },
-  Failed: { color: '#DC2626', bg: '#FEF2F2', icon: 'close-circle' },
+const STATUS_CONFIG: Record<string, { color: string, bg: string, icon: string }> = {
+  PAYMENT: { color: '#16A34A', bg: '#F0FDF4', icon: 'checkmark-circle' },
+  DISBURSEMENT: { color: '#D97706', bg: '#FFFBEB', icon: 'time-outline' },
+  WALLET_TRANSFER: { color: '#2563EB', bg: '#EFF6FF', icon: 'swap-horizontal' },
+  DEFAULT: { color: '#475569', bg: '#F1F5F9', icon: 'list' }
 };
 
 const TransactionScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [payments] = useState(DUMMY_PAYMENTS);
+  const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState<ApiTransaction[]>([]);
+  const [error, setError] = useState('');
 
   const [status, setStatus] = useState<typeof STATUS_FILTERS[number]>('All');
-  const [month, setMonth] = useState<typeof MONTH_FILTERS[number]>('All');
 
   const [statusOpen, setStatusOpen] = useState(false);
-  const [monthOpen, setMonthOpen] = useState(false);
+
+  const fetchHistory = async () => {
+    try {
+      setError('');
+      const data = await getTransactions();
+      setPayments(data || []);
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
+    fetchHistory();
   };
 
   const filtered = useMemo(() => {
     return payments
       .filter(p => {
-        const statusMatch = status === 'All' || p.status === status;
-        const monthMatch = month === 'All' || p.month === month;
-        return statusMatch && monthMatch;
+        const statusMatch = status === 'All' || p.type === status;
+        return statusMatch;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [payments, status, month]);
+  }, [payments, status]);
 
   const grouped = useMemo(() => {
-    const map: Record<string, EmiPayment[]> = {};
+    const map: Record<string, ApiTransaction[]> = {};
     filtered.forEach(p => {
-      if (!map[p.month]) map[p.month] = [];
-      map[p.month].push(p);
+      const monthYear = new Date(p.date).toLocaleString('default', { month: 'short', year: 'numeric' });
+      if (!map[monthYear]) map[monthYear] = [];
+      map[monthYear].push(p);
     });
     return map;
   }, [filtered]);
 
-  const renderCard = (item: EmiPayment) => {
-    const s = STATUS_CONFIG[item.status];
-    return (
-      <View key={item.id} style={styles.card}>
-        {/* <View style={[styles.iconContainer, { backgroundColor: s.bg }]}>
-          <Ionicons name={s.icon as any} size={22} color={s.color} />
-        </View> */}
+  const renderCard = (item: ApiTransaction) => {
+    const isDebit = item.amount < 0;
+    const isFailed = item.status === 'FAILED';
+    const amountColor = isFailed ? '#DC2626' : isDebit ? '#DC2626' : '#179b00ff';
 
+    return (
+      <View key={item.transactionId} style={styles.card}>
         <View style={{ flex: 1 }}>
-          <AppText style={styles.titleText}>EMI Payment</AppText>
+          <AppText style={styles.titleText}>{item.note || item.type}</AppText>
           <AppText style={styles.subText}>{item.transactionId}</AppText>
           <AppText style={styles.subText}>
             {new Date(item.date).toDateString()}
@@ -90,12 +88,14 @@ const TransactionScreen = ({ navigation }: any) => {
         </View>
 
         <View style={{ alignItems: 'flex-end' }}>
-          <AppText style={[styles.amount, { color: s.color }]}>
-            ₹{item.amount}
+          <AppText style={[styles.amount, { color: amountColor }]}>
+            {isDebit ? '-' : '+'}{' '}₹{Math.abs(item.amount).toLocaleString()}
           </AppText>
-          <AppText style={{ color: s.color, fontSize: 12 }}>
-            {item.status}
-          </AppText>
+          {item.status && (
+            <AppText style={{ color: amountColor, fontSize: 12 }}>
+              {item.status === "SUCCESS" ? isDebit ? "Debited" : "Credited" : item.status === "FAILED" ? "Failed" : "Pending"}
+            </AppText>
+          )}
         </View>
       </View>
     );
@@ -105,10 +105,11 @@ const TransactionScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} />
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <AppText style={styles.headerTitle}>History</AppText>
+        <AppText style={styles.headerTitle}>Transactions</AppText>
+        <View style={{ width: 24 }} />
       </View>
 
       {/* FILTER BAR */}
@@ -118,22 +119,9 @@ const TransactionScreen = ({ navigation }: any) => {
           style={styles.dropdown}
           onPress={() => {
             setStatusOpen(!statusOpen);
-            setMonthOpen(false);
           }}
         >
           <AppText>{status}</AppText>
-          <Ionicons name="chevron-down" size={16} />
-        </TouchableOpacity>
-
-        {/* MONTH */}
-        <TouchableOpacity
-          style={styles.dropdown}
-          onPress={() => {
-            setMonthOpen(!monthOpen);
-            setStatusOpen(false);
-          }}
-        >
-          <AppText>{month}</AppText>
           <Ionicons name="chevron-down" size={16} />
         </TouchableOpacity>
       </View>
@@ -156,32 +144,18 @@ const TransactionScreen = ({ navigation }: any) => {
         </View>
       )}
 
-      {/* MONTH DROPDOWN */}
-      {monthOpen && (
-        <View style={styles.dropdownMenu}>
-          {MONTH_FILTERS.map(m => (
-            <TouchableOpacity
-              key={m}
-              style={styles.dropdownItem}
-              onPress={() => {
-                setMonth(m);
-                setMonthOpen(false);
-              }}
-            >
-              <AppText>{m}</AppText>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
       {/* LIST */}
       <ScrollView
         contentContainerStyle={{ padding: 16 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />
         }
       >
-        {filtered.length === 0 ? (
+        {loading && !refreshing ? (
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        ) : error ? (
+          <AppText style={{ color: 'red' }}>{error}</AppText>
+        ) : filtered.length === 0 ? (
           <AppText>No Data Found</AppText>
         ) : (
           Object.entries(grouped).map(([month, items]) => (
@@ -204,19 +178,28 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    padding: 16,
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    backgroundColor: COLORS.card,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  backBtn: {
+    padding: 4,
   },
 
   headerTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: 'bold',
   },
 
   filterBar: {
     flexDirection: 'row',
     gap: 10,
     paddingHorizontal: 16,
+    marginTop: 10,
     marginBottom: 10,
   },
 
@@ -228,17 +211,20 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     padding: 10,
     borderRadius: 10,
+    backgroundColor: COLORS.card,
   },
 
   dropdownMenu: {
     position: 'absolute',
-    top: 110,
+    top: 140,
     left: 16,
     right: 16,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.card,
     borderRadius: 10,
     elevation: 5,
     zIndex: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
 
   dropdownItem: {
@@ -248,6 +234,7 @@ const styles = StyleSheet.create({
   month: {
     marginVertical: 10,
     fontWeight: '700',
+    color: COLORS.text,
   },
 
   card: {
@@ -258,19 +245,12 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     marginBottom: 10,
     alignItems: 'center',
-  },
-
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
+    backgroundColor: COLORS.card,
   },
 
   titleText: {
     fontWeight: '700',
+    color: COLORS.text,
   },
 
   subText: {
@@ -280,5 +260,6 @@ const styles = StyleSheet.create({
 
   amount: {
     fontWeight: '700',
+    fontSize: 16,
   },
 });

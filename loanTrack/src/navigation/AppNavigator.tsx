@@ -5,6 +5,8 @@ import React from 'react';
 
 import EmiResultScreen from '../screens/EmiResultScreen';
 import PaymentScheduleScreen from '../screens/PaymentScheduleScreen';
+import ConfirmPaymentScreen from '../screens/ConfirmPaymentScreen';
+import AddMoneyScreen from '../screens/AddMoneyScreen';
 import MainTabNavigator from './MainTabNavigator';
 import AuthNavigator from './AuthNavigator';
 import { AppStackRoute } from '../enums';
@@ -18,6 +20,8 @@ const AppNavigator = () => {
       <Stack.Screen name={AppStackRoute.MainTabs} component={MainTabNavigator} />
       <Stack.Screen name={AppStackRoute.EmiResult} component={EmiResultScreen} />
       <Stack.Screen name={AppStackRoute.PaymentSchedule} component={PaymentScheduleScreen} />
+      <Stack.Screen name={AppStackRoute.ConfirmPayment} component={ConfirmPaymentScreen} />
+      <Stack.Screen name={AppStackRoute.AddMoney} component={AddMoneyScreen} />
     </Stack.Navigator>
   );
 };

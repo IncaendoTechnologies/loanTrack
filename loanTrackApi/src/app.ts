@@ -4,6 +4,11 @@ import { requireAuth } from "./middleware/auth";
 import loanRoutes from "./routes/loan";
 import userRoutes from "./routes/user";
 import transaction from "./routes/transaction";
+import walletRoutes from "./routes/wallet";
+import paymentService from "./routes/paymentService";
+
+const version = process.env.API_VERSION;
+
 const app = express();
 
 app.use((req, res, next) => {
@@ -41,8 +46,9 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-app.use("/loans", requireAuth, loanRoutes);
-app.use("/users", requireAuth, userRoutes);
-app.use("/transactions", requireAuth, transaction);
-
+app.use(`/${version}/loans`, requireAuth, loanRoutes);
+app.use(`/${version}/users`, requireAuth, userRoutes);
+app.use(`/${version}/transactions`, requireAuth, transaction);
+app.use(`/${version}/wallet`, walletRoutes);
+app.use(`/${version}/payment-service`, requireAuth, paymentService);
 export default app;

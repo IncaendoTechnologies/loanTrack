@@ -29,4 +29,6 @@ export type RootStackParamList = {
   MainTabs: undefined;
   EmiResult: EmiResultParams;
   PaymentSchedule: PaymentScheduleParams;
+  ConfirmPayment: undefined;
+  AddMoney: undefined;
 };

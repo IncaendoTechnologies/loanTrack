@@ -15,7 +15,7 @@ const OWNER_FIELD = process.env.DYNAMO_OWNER_FIELD || "owner";
 class TransactionServices {
   owner: string;
   transactionId: string;
-  loanId: string;
+  loanId?: string;
   amount: number;
   type:
     | "PAYMENT"
@@ -24,8 +24,11 @@ class TransactionServices {
     | "FEE"
     | "REFUND"
     | "CHARGE"
-    | "ADJUSTMENT";
+    | "ADJUSTMENT"
+    | "WALLET_TRANSFER";
   date: string;
+  status?: "SUCCESS" | "FAILED" | "PENDING";
+  note?: string;
 
   private static indexesChecked = false;
   private static hasOwnerIndex = false;
@@ -38,6 +41,8 @@ class TransactionServices {
     this.amount = transaction.amount;
     this.type = transaction.type;
     this.date = transaction.date;
+    this.status = transaction.status;
+    this.note = transaction.note;
   }
 
   // ✅ Load Index Info
@@ -75,6 +80,8 @@ class TransactionServices {
         amount: this.amount,
         type: this.type,
         date: this.date,
+        status: this.status,
+        note: this.note,
       },
     };
 
@@ -87,7 +94,10 @@ class TransactionServices {
     const params = {
       TableName: TABLE_NAME,
       IndexName: OWNER_INDEX_NAME,
-      KeyConditionExpression: `${OWNER_FIELD} = :owner`,
+      KeyConditionExpression: `#owner = :owner`,
+      ExpressionAttributeNames: {
+        "#owner": OWNER_FIELD,
+      },
       ExpressionAttributeValues: {
         ":owner": owner,
       },
@@ -115,7 +125,10 @@ class TransactionServices {
 
     const params = {
       TableName: TABLE_NAME,
-      FilterExpression: "owner = :owner",
+      FilterExpression: "#owner = :owner",
+      ExpressionAttributeNames: {
+        "#owner": "owner",
+      },
       ExpressionAttributeValues: {
         ":owner": owner,
       },

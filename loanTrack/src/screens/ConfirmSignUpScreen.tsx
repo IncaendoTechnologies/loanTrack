@@ -1,7 +1,7 @@
 import { Auth } from 'aws-amplify';
 import React, { useState } from 'react';
 import {
-  Alert,
+  ToastAndroid,
   Text,
   TextInput,
   TouchableOpacity,
@@ -12,6 +12,7 @@ import type { CognitoUser } from '../types/types';
 import BackArrow from '../components/BackArrow';
 import LoanTrackLogo from '../components/LoanTrackLogo';
 import styles from '../stylesheets/ConfirmSignUpStyles';
+import { confirmSignUpWebhook, ConfirmSignUpPayload } from '../apis/paymentService';
 
 const ConfirmSignUpScreen = ({ route, navigation }: any) => {
   const { email, password, phoneNumber, firstName, lastName } = route.params || {};
@@ -76,8 +77,38 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
       const normalizedEmail = email.trim().toLowerCase();
       await Auth.confirmSignUp(normalizedEmail, code);
       const cognitoSub = await signInAndReturnSub();
-      navigation.replace('MainTabs');
       createBackendUser(cognitoSub);
+
+      if (route.params?.transactionId && route.params?.fromEmail) {
+        try {
+
+          const payload: ConfirmSignUpPayload = {
+            transactionId: route.params.transactionId,
+            fromUserId: cognitoSub,
+            fromEmail: route.params.fromEmail
+          };
+          await confirmSignUpWebhook(payload);
+        
+          navigation.replace('ConfirmPayment', {
+            transactionId: route.params.transactionId,
+            amount: route.params.amount,
+            isSuccessFlow: false
+          });
+        } catch (webhookErr) {
+          console.error('Webhook Error:', webhookErr);
+          navigation.replace('MainTabs');
+        }
+      } else if (route.params?.amount && route.params?.toUserId) {
+        // Fallback for cases without transactionId
+        navigation.replace('ConfirmPayment', {
+          amount: route.params.amount,
+          toUserId: route.params.toUserId,
+          note: route.params.note,
+          callbackUrl: route.params.callbackUrl,
+        });
+      } else {
+        navigation.replace('MainTabs');
+      }
     } catch (error) {
       console.log('Confirm Error:', error);
       const authError = error as any;
@@ -86,7 +117,7 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
 
       if (errorCode === 'ExpiredCodeException') {
         setErrorMessage('Verification code expired. Please resend OTP.');
-        Alert.alert('Error', 'Code expired. Request a new code.');
+        ToastAndroid.show('Error: Code expired. Request a new code.', ToastAndroid.SHORT);
         return;
       }
 
@@ -106,19 +137,19 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
           setErrorMessage(
             `Confirmed, but unable to sign in: ${innerMessage}. Please check your password.`
           );
-          Alert.alert('Error', 'Confirmed, but unable to sign in. Please check your password.');
+          ToastAndroid.show('Error: Confirmed, but unable to sign in. Please check your password.', ToastAndroid.SHORT);
           return;
         }
       }
 
       if (errorCode === 'CodeMismatchException') {
         setErrorMessage('Invalid verification code. Please check the OTP and try again.');
-        Alert.alert('Error', 'Invalid verification code. Please try again.');
+        ToastAndroid.show('Error: Invalid verification code. Please try again.', ToastAndroid.SHORT);
         return;
       }
 
       setErrorMessage(message);
-      Alert.alert('Error', 'Verification failed. Please try again.');
+      ToastAndroid.show('Error: Verification failed. Please try again.', ToastAndroid.SHORT);
     } finally {
       setLoading(false);
     }
@@ -128,10 +159,10 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       await Auth.resendSignUp(normalizedEmail);
-      Alert.alert('Success', 'Verification code sent.');
+      ToastAndroid.show('Success: Verification code sent.', ToastAndroid.SHORT);
     } catch (error) {
       console.log('Resend OTP Error:', error);
-      Alert.alert('Error', 'Could not resend code. Please try again.');
+      ToastAndroid.show('Error: Could not resend code. Please try again.', ToastAndroid.SHORT);
     }
   };
 
