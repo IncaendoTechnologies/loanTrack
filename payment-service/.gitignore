@@ -4,3 +4,5 @@
 # env files
 .env
 .env.local
+
+dist

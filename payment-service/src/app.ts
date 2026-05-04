@@ -11,6 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/health", (_req, res) => {
+  res.json({ ok: true });
+});
 app.use("/v1/payments", paymentRoutes);
 app.use("/v1/users", userRoutes);
 
