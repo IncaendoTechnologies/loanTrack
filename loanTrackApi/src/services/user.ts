@@ -44,6 +44,7 @@ export const updateUserById = async (
     lastName: string;
     updatedAt: string;
     loanLimit?: number;
+    usedLoanAmount?: number;
   }
 ): Promise<User | null> => {
   const updateParts = [

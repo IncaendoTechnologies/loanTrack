@@ -11,6 +11,8 @@ export interface Loan {
   totalInterest: number;
   totalPayment: number;
 
+  usedLoanAmount: number;
+  usedWalletAmount: number;
   status: 'ACTIVE' | 'CLOSED';
 
   createdAt: string;

@@ -36,15 +36,15 @@ export const createLoan = async (req: Request, res: Response) => {
     }
     const loans = (await loanService.getLoansByUserId(userId)) as Loan[];
     const borrowedAmount = getActiveBorrowedAmount(loans);
-    const usedLoanAmount = user.usedLoanAmount || 0;
-    const remainingLimit = Math.max(0, user.loanLimit - borrowedAmount - usedLoanAmount);
+    const currentUserUsedLoanAmount = user.usedLoanAmount || 0;
+    const remainingLimit = Math.max(0, user.loanLimit - borrowedAmount - currentUserUsedLoanAmount);
 
     if (amount > remainingLimit) {
       return res.status(400).json({
         error: "Loan amount exceeds your remaining limit",
         loanLimit: user.loanLimit,
         borrowedAmount,
-        usedLoanAmount,
+        usedLoanAmount: currentUserUsedLoanAmount,
         remainingLimit,
       });
     }
@@ -59,6 +59,8 @@ export const createLoan = async (req: Request, res: Response) => {
       interestRate,
       duration,
       ...calc,
+      usedLoanAmount: 0,
+      usedWalletAmount: 0,
       status: "ACTIVE",
       createdAt: new Date().toISOString(),
     };

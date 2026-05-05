@@ -6,6 +6,8 @@ export interface User {
   firstName: string;
   lastName: string;
   loanLimit: number;
+  walletBalance?: number;
+  usedLoanAmount?: number;
   createdAt: string;
   updatedAt: string;
 }
