@@ -48,7 +48,7 @@ export class PaymentServiceController {
         userId,
       }, {
         headers: {
-          // Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -57,7 +57,7 @@ export class PaymentServiceController {
         message: response.data.message
       });
     } catch (error: any) {
-      console.error("Error in requestOTP:", error.data);
+      console.error("Error in requestOTP:", error);
       return res.status(500).json({ message: "Failed to send OTP" });
     }
   };
