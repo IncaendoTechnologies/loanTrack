@@ -9,7 +9,26 @@
       "client_info": {
         "mobilesdk_app_id": "1:677020121698:android:c933cf99ddc55163206f3b",
         "android_client_info": {
-          "package_name": "com.anonymous.testapp"
+          "package_name": "com.loantrack.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQOpUw5WL9I_WBxAjIdrYa0aQqSA0h9XU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677020121698:android:f3ec08f3f48ae6ff206f3b",
+        "android_client_info": {
+          "package_name": "com.loantrack.app"
         }
       },
       "oauth_client": [],

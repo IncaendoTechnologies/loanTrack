@@ -38,36 +38,10 @@ export class PaymentController {
 
         await this.paymentService.createTransaction(transaction);
 
-        // Automatically trigger deep link for registration in development environment
-        if (process.env.NODE_ENV !== "production") {
-          const encodedEmail = encodeURIComponent(fromEmail || "");
-          const encodedNote = encodeURIComponent(note || "");
-          const encodedCallback = encodeURIComponent(callbackUrl || "");
-          const deepLink = `loantrack://auth/signup?fromEmail=${encodedEmail}&amount=${amount}&toUserId=${toUserId}&note=${encodedNote}&callbackUrl=${encodedCallback}&transactionId=${transactionId}`;
-
-          console.log(`[Auto-Open] Attempting to force-open deep link: ${deepLink}`);
-
-          // Use adb to force open the intent in our specific package
-          const packageName = "com.loantrack.app";
-
-          // Escape '&' for the Android shell
-          const escapedDeepLink = deepLink.replace(/&/g, '\\&');
-
-          // Build command: adb shell am start -a VIEW -d 'URL' PKG
-          const adbCommand = `adb shell am start -W -a android.intent.action.VIEW -d "${escapedDeepLink}" ${packageName}`;
-
-          console.log(`[Auto-Open] Executing: ${adbCommand}`);
-
-          exec(adbCommand, (error) => {
-            if (error) {
-              console.error(`[Auto-Open] ADB failed: ${error.message}`);
-              // Final fallback to uri-scheme
-              exec(`npx uri-scheme open "${deepLink}" --android`);
-            } else {
-              console.log(`[Auto-Open] Successfully opened app.`);
-            }
-          });
-        }
+        const encodedEmail = encodeURIComponent(fromEmail || "");
+        const encodedNote = encodeURIComponent(note || "");
+        const encodedCallback = encodeURIComponent(callbackUrl || "");
+        const deepLink = `loantrack://auth/signup?fromEmail=${encodedEmail}&amount=${amount}&toUserId=${toUserId}&note=${encodedNote}&callbackUrl=${encodedCallback}&transactionId=${transactionId}`;
 
         return res.status(403).json({
           statusCode: 403,
@@ -79,7 +53,8 @@ export class PaymentController {
             amount,
             toUserId,
             note,
-            callbackUrl
+            callbackUrl,
+            deepLink
           }
         });
       }
@@ -102,22 +77,7 @@ export class PaymentController {
 
       const result = await this.paymentService.createTransaction(transaction);
 
-      // Automatically trigger deep link in development environment
-      if (process.env.NODE_ENV !== "production") {
-        const deepLink = `loantrack://confirm-payment?transactionId=${result.transactionId}&amount=${result.amount}`;
-        const packageName = "com.loantrack.app";
-        const escapedDeepLink = deepLink.replace(/&/g, '\\&');
-        const adbCommand = `adb shell am start -W -a android.intent.action.VIEW -d "${escapedDeepLink}" ${packageName}`;
-
-        exec(adbCommand, (error) => {
-          if (error) {
-            console.error(`[Auto-Open] ADB failed: ${error.message}`);
-            exec(`npx uri-scheme open "${deepLink}" --android`);
-          } else {
-            console.log(`[Auto-Open] Successfully opened app on emulator.`);
-          }
-        });
-      }
+      const deepLink = `loantrack://confirm-payment?transactionId=${result.transactionId}&amount=${result.amount}`;
 
       return res.status(201).json({
         statusCode: 201,
@@ -125,7 +85,8 @@ export class PaymentController {
         data: {
           transactionId: result.transactionId,
           amount: result.amount,
-          status: result.status
+          status: result.status,
+          deepLink
         },
       });
     } catch (error) {
