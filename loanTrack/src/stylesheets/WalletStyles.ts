@@ -46,7 +46,7 @@ export default StyleSheet.create({
   },
   balanceValue: {
     color: '#FFF',
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   statsRow: {

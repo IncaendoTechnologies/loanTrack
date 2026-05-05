@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   limitValue: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.primary,
   },

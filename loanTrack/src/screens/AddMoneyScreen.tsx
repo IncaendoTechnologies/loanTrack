@@ -15,6 +15,7 @@ import { COLORS } from '../theme/colors';
 import { Auth } from 'aws-amplify';
 import { getWalletStatus, topUpWallet } from '../apis/walletApi';
 import styles from '../stylesheets/AddMoneyStyles';
+import { formatCurrencyIN } from '../utils/format';
 
 const AddMoneyScreen = ({ navigation }: any) => {
   const [amount, setAmount] = useState('');
@@ -91,7 +92,7 @@ const AddMoneyScreen = ({ navigation }: any) => {
           {fetchingLimit ? (
             <ActivityIndicator color={COLORS.primary} size="small" />
           ) : (
-            <AppText style={styles.limitValue}>₹{availableCredit.toLocaleString()}</AppText>
+            <AppText style={styles.limitValue}>₹{formatCurrencyIN(availableCredit)}</AppText>
           )}
         </View>
 

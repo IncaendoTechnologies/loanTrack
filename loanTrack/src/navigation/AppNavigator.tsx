@@ -42,7 +42,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute as keyof RootStackParamList}>
       <Stack.Screen name={AppStackRoute.Auth} component={AuthNavigator} />
       <Stack.Screen name={AppStackRoute.MainTabs} component={MainTabNavigator} />
       <Stack.Screen name={AppStackRoute.EmiResult} component={EmiResultScreen} />

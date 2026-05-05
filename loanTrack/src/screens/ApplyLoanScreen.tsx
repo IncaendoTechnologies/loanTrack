@@ -9,6 +9,9 @@ import {
 
 import AppText from '../components/AppText';
 import styles from '../stylesheets/ApplyLoanStyles';
+import { Auth } from 'aws-amplify';
+import { formatCurrencyIN } from '../utils/format';
+import { COLORS } from '../theme/colors';
 
 const ApplyLoanScreen = ({ navigation }: any) => {
   const [amount, setAmount] = useState('');
@@ -16,6 +19,25 @@ const ApplyLoanScreen = ({ navigation }: any) => {
   const [duration, setDuration] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [availableCredit, setAvailableCredit] = useState(0);
+  const [fetchingWallet, setFetchingWallet] = useState(true);
+
+  React.useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        const userId = user.attributes.sub;
+        const { getWalletStatus } = await import('../apis/walletApi');
+        const data = await getWalletStatus(userId);
+        setAvailableCredit(data.availableCredit || 0);
+      } catch (err) {
+        console.error('Error fetching wallet:', err);
+      } finally {
+        setFetchingWallet(false);
+      }
+    };
+    fetchWallet();
+  }, []);
 
   const calculateEMI = async () => {
     setErrorMessage('');
@@ -26,6 +48,11 @@ const ApplyLoanScreen = ({ navigation }: any) => {
     if (!p || !r || !n) {
       const message = 'Please enter valid amount, interest rate, and duration.';
       setErrorMessage(message);
+      return;
+    }
+
+    if (p > availableCredit) {
+      setErrorMessage(`Amount exceeds your available credit limit of ₹${formatCurrencyIN(availableCredit)}`);
       return;
     }
 
@@ -73,7 +100,14 @@ const ApplyLoanScreen = ({ navigation }: any) => {
 
       {/* FORM CARD */}
       <View style={styles.card}>
-        <AppText style={styles.cardTitle}>Loan Details</AppText>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+          <AppText style={styles.cardTitle}>Loan Details</AppText>
+          <View style={{ backgroundColor: COLORS.card, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: COLORS.border }}>
+             <AppText style={{ color: COLORS.primary, fontSize: 12, fontWeight: 'bold' }}>
+               Limit: ₹{formatCurrencyIN(availableCredit)}
+             </AppText>
+          </View>
+        </View>
 
         {/* Amount */}
         <View style={styles.inputGroup}>

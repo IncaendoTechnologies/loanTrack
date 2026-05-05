@@ -17,15 +17,17 @@ import {
   getActiveLoans,
   getBorrowedAmount,
   getNextEmiSummary,
-  getRemainingBorrowLimit,
 } from '../helpers/loan';
+import { getWalletStatus } from '../apis/walletApi';
 import { COLORS } from '../theme/colors';
 import styles from '../stylesheets/DashboardStyles';
+import { formatCurrencyIN } from '../utils/format';
 
 const DashboardScreen = ({ navigation }: any) => {
   const [userName, setUserName] = useState('User');
   const [loanLimit, setLoanLimit] = useState(0);
   const [loans, setLoans] = useState<LoanRecord[]>([]);
+  const [remainingAmount, setRemainingAmount] = useState(0);
   const [loadingLoans, setLoadingLoans] = useState(true);
   const [error, setError] = useState('');
 
@@ -36,14 +38,16 @@ const DashboardScreen = ({ navigation }: any) => {
       const cognitoUser = (await Auth.currentAuthenticatedUser()) as CognitoUser;
       const cognitoSub = cognitoUser.attributes.sub;
 
-      const [profile, loanResult] = await Promise.all([
+      const [profile, loanResult, walletStatus] = await Promise.all([
         getUserById(cognitoSub),
         getAllLoans(),
+        getWalletStatus(cognitoSub),
       ]);
 
       setUserName(`${profile.firstName} ${profile.lastName}`.trim());
       setLoanLimit(profile.loanLimit || 0);
       setLoans(loanResult);
+      setRemainingAmount(walletStatus.availableCredit || 0);
     } catch (err) {
       setError(String(err));
       setLoans([]);
@@ -58,21 +62,19 @@ const DashboardScreen = ({ navigation }: any) => {
     }, [])
   );
 
-  const { borrowedAmount, remainingAmount, nextEmiAmount, nextEmiDate, activeLoanCount } =
+  const { borrowedAmount, nextEmiAmount, nextEmiDate, activeLoanCount } =
     useMemo(() => {
       const borrowed = getBorrowedAmount(loans);
-      const remaining = getRemainingBorrowLimit(loanLimit, loans);
       const emi = getNextEmiSummary(loans);
       const activeLoans = getActiveLoans(loans).length;
 
       return {
         borrowedAmount: borrowed,
-        remainingAmount: remaining,
         nextEmiAmount: emi.totalEmi,
         nextEmiDate: emi.dueDateLabel,
         activeLoanCount: activeLoans,
       };
-    }, [loanLimit, loans]);
+    }, [loans]);
 
   const recentLoans = useMemo(() => {
     return [...loans]
@@ -108,14 +110,14 @@ const DashboardScreen = ({ navigation }: any) => {
         <AppText style={styles.label}>Borrow Limit</AppText>
 
         <AppText style={styles.amount}>
-          ₹ {loanLimit.toLocaleString()}
+          ₹ {formatCurrencyIN(loanLimit)}
         </AppText>
 
         <View style={styles.mainBottom}>
           <View>
             <AppText style={styles.label}>Remaining Limit</AppText>
             <AppText style={styles.amountSmall}>
-              ₹ {remainingAmount.toLocaleString()}
+              ₹ {formatCurrencyIN(remainingAmount)}
             </AppText>
           </View>
 
@@ -135,7 +137,7 @@ const DashboardScreen = ({ navigation }: any) => {
           <Ionicons name="wallet-outline" size={20} color={COLORS.primary} />
           <AppText style={styles.smallLabel}>Borrowed</AppText>
           <AppText style={styles.smallAmount}>
-            ₹ {borrowedAmount.toLocaleString()}
+            ₹ {formatCurrencyIN(borrowedAmount)}
           </AppText>
         </View>
 
@@ -143,7 +145,7 @@ const DashboardScreen = ({ navigation }: any) => {
           <Ionicons name="calendar-outline" size={20} color="#EA580C" />
           <AppText style={styles.smallLabel}>Next EMI Due</AppText>
           <AppText style={styles.smallAmount}>
-            ₹ {nextEmiAmount.toLocaleString()}
+            ₹ {formatCurrencyIN(nextEmiAmount)}
           </AppText>
           <AppText style={styles.subText}>{nextEmiDate}</AppText>
         </View>
@@ -153,7 +155,7 @@ const DashboardScreen = ({ navigation }: any) => {
       <View style={styles.dueCard}>
         <View>
           <AppText style={styles.dueTitle}>Upcoming EMI</AppText>
-          <AppText style={styles.dueAmount}>₹ {nextEmiAmount.toLocaleString()}</AppText>
+          <AppText style={styles.dueAmount}>₹ {formatCurrencyIN(nextEmiAmount)}</AppText>
           <AppText style={styles.dueSubText}>Due on {nextEmiDate}</AppText>
         </View>
         <View style={styles.dueBadge}>
@@ -201,7 +203,7 @@ const DashboardScreen = ({ navigation }: any) => {
 
               <View style={{ marginLeft: 10 }}>
                 <AppText style={styles.loanAmount}>
-                  ₹ {loan.amount.toLocaleString()}
+                  ₹ {formatCurrencyIN(loan.amount)}
                 </AppText>
                 <AppText style={styles.subText}>
                   {new Date(loan.createdAt).toLocaleDateString('en-IN')}

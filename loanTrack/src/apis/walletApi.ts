@@ -22,3 +22,13 @@ export const topUpWallet = async (payload: { userId: string; amount: number }): 
 
   return handleResponse<any>(response);
 };
+
+export const transferToLoanLimit = async (payload: { userId: string; amount: number }): Promise<any> => {
+  const response = await requestWithFallback('/wallet/transfer-to-loan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  return handleResponse<any>(response);
+};

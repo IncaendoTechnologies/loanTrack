@@ -25,7 +25,8 @@ class TransactionServices {
     | "REFUND"
     | "CHARGE"
     | "ADJUSTMENT"
-    | "WALLET_TRANSFER";
+    | "WALLET_TRANSFER"
+    | "REPAYMENT";
   date: string;
   status?: "SUCCESS" | "FAILED" | "PENDING";
   note?: string;
