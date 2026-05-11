@@ -1,8 +1,6 @@
 export enum AppTabRoute {
   Home = 'Home',
   Apply = 'Apply',
-  Schedule = 'Schedule',
-  Transaction = 'Transaction',
   Profile = 'Profile',
   Wallet = 'Wallet',
 }
@@ -17,4 +15,6 @@ export enum AppStackRoute {
   PaymentSchedule = 'PaymentSchedule',
   ConfirmPayment = 'ConfirmPayment',
   AddMoney = 'AddMoney',
+  Schedule = 'Schedule',
+  Transaction = 'Transaction',
 }

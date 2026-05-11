@@ -2,11 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { LoanRecord, getAllLoans } from '../apis/loanApi';
 import AppText from '../components/AppText';
@@ -45,18 +45,15 @@ const ScheduleScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      
+
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.primary} />
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
 
         <AppText style={styles.title}>Payment Schedule</AppText>
-
-        <TouchableOpacity>
-          <Ionicons name="download-outline" size={20} color={COLORS.primary} />
-        </TouchableOpacity>
+        <View style={{ width: 24 }} />
       </View>
 
       {loading ? (

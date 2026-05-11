@@ -9,6 +9,8 @@ import EmiResultScreen from '../screens/EmiResultScreen';
 import PaymentScheduleScreen from '../screens/PaymentScheduleScreen';
 import ConfirmPaymentScreen from '../screens/ConfirmPaymentScreen';
 import AddMoneyScreen from '../screens/AddMoneyScreen';
+import ScheduleScreen from '../screens/ScheduleScreen';
+import TransactionScreen from '../screens/TransactionScreen';
 import MainTabNavigator from './MainTabNavigator';
 import AuthNavigator from './AuthNavigator';
 import { AppStackRoute } from '../enums';
@@ -49,6 +51,8 @@ const AppNavigator = () => {
       <Stack.Screen name={AppStackRoute.PaymentSchedule} component={PaymentScheduleScreen} />
       <Stack.Screen name={AppStackRoute.ConfirmPayment} component={ConfirmPaymentScreen} />
       <Stack.Screen name={AppStackRoute.AddMoney} component={AddMoneyScreen} />
+      <Stack.Screen name={AppStackRoute.Schedule} component={ScheduleScreen} />
+      <Stack.Screen name={AppStackRoute.Transaction} component={TransactionScreen} />
     </Stack.Navigator>
   );
 };

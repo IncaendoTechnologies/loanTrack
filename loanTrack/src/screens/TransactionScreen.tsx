@@ -81,7 +81,7 @@ const TransactionScreen = ({ navigation }: any) => {
       <View key={item.transactionId} style={styles.card}>
         <View style={{ flex: 1 }}>
           <AppText style={styles.titleText}>{item.note || item.type}</AppText>
-          <AppText style={styles.subText}>{item.transactionId}</AppText>
+          {/* <AppText style={styles.subText}>{item.transactionId}</AppText> */}
           <AppText style={styles.subText}>
             {new Date(item.date).toDateString()}
           </AppText>
@@ -91,11 +91,11 @@ const TransactionScreen = ({ navigation }: any) => {
           <AppText style={[styles.amount, { color: amountColor }]}>
             {isDebit ? '-' : '+'}{' '}₹{Math.abs(item.amount).toLocaleString()}
           </AppText>
-          {item.status && (
+          {/* {item.status && (
             <AppText style={{ color: amountColor, fontSize: 12 }}>
               {item.status === "SUCCESS" ? isDebit ? "Debited" : "Credited" : item.status === "FAILED" ? "Failed" : "Pending"}
             </AppText>
-          )}
+          )} */}
         </View>
       </View>
     );
@@ -105,7 +105,7 @@ const TransactionScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <AppText style={styles.headerTitle}>Transactions</AppText>
@@ -182,9 +182,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 16,
     paddingBottom: 16,
-    backgroundColor: COLORS.card,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   backBtn: {
     padding: 4,

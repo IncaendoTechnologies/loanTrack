@@ -45,7 +45,7 @@ const PaymentScheduleScreen = ({ route, navigation }: any) => {
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.primary} />
+          <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
 
         <AppText style={styles.title}>Payment Schedule</AppText>

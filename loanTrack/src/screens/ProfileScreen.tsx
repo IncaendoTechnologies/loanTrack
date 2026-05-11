@@ -1,16 +1,16 @@
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ToastAndroid,
-    ScrollView,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ToastAndroid,
+  ScrollView,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-import { createUser, getUserById, getUserByIdOrNull } from '../apis/userApi';
-import { UserRecord } from '../interfaces/index';
+import { createUser, getUserByIdOrNull } from '../apis/userApi';
+import { UserPayload, UserRecord } from '../interfaces/index';
 import AppText from '../components/AppText';
 import type { CognitoUser } from '../types/types';
 import { COLORS } from '../theme/colors';
@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }: any) => {
     }
 
     try {
-      return await createUser(payload);
+      return await createUser(payload as UserPayload);
     } catch (createError) {
       console.log('Failed to create backend user in ProfileScreen:', createError);
       return null;
@@ -107,11 +107,16 @@ const ProfileScreen = ({ navigation }: any) => {
     }
   };
 
-  const renderItem = (icon: any, label: string, color: string) => (
-    <TouchableOpacity style={styles.item}>
+  const renderItem = (icon: any, label: string, color: string, type: string, onPress?: () => void) => (
+    <TouchableOpacity style={styles.item} onPress={onPress}>
       <View style={styles.itemLeft}>
+
         <View style={[styles.iconCircle, { backgroundColor: color + '20' }]}>
-          <Ionicons name={icon} size={18} color={color} />
+          {type === 'AntDesign' ? (
+            <AntDesign name={icon} size={18} color={color} />
+          ) : (
+            <Ionicons name={icon} size={18} color={color} />
+          )}
         </View>
         <AppText style={styles.itemText}>{label}</AppText>
       </View>
@@ -124,13 +129,17 @@ const ProfileScreen = ({ navigation }: any) => {
     user
       ? `${user.firstName} ${user.lastName}`
       : [cognitoProfile?.firstName, cognitoProfile?.lastName].filter(Boolean).join(' ') ||
-        'User';
+      'User';
   const displayEmail = user?.email || cognitoProfile?.email || '-';
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
     <ScrollView style={styles.container}>
-      
+      <View >
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        </TouchableOpacity>
+      </View>
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.avatar}>
@@ -159,10 +168,10 @@ const ProfileScreen = ({ navigation }: any) => {
           Account Settings
         </AppText>
 
-        {renderItem('mail', 'Email Notifications', '#2563EB')}
-        {renderItem('shield-checkmark', 'Security & Privacy', '#7C3AED')}
-        {renderItem('notifications', 'Push Notifications', '#EA580C')}
-        {renderItem('settings', 'App Preferences', '#475569')}
+        {renderItem('shield-checkmark', 'Security & Privacy', '#7C3AED', "Ionicons")}
+        {renderItem('history', 'Transaction History', '#2563EB', 'AntDesign', () => navigation.navigate('Transaction'))}
+        {renderItem('receipt-outline', 'Your Loans', '#EA580C', "Ionicons", () => navigation.navigate('Schedule'))}
+        {renderItem('settings', 'App Preferences', '#475569', "Ionicons")}
       </View>
 
       {/* LOGOUT BUTTON */}

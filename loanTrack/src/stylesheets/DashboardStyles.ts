@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
 
   mainCard: {
     backgroundColor: COLORS.primary,
+    flexDirection: 'column',
     padding: 16,
     borderRadius: 12,
     marginTop: 20,
@@ -63,9 +64,17 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
+
   mainBottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    // marginTop:16,
+    alignItems: 'center',
+  },
+  mainWallet: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    
     marginTop: 16,
     alignItems: 'center',
   },

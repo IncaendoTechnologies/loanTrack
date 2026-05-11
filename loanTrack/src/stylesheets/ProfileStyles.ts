@@ -114,6 +114,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  backBtn: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

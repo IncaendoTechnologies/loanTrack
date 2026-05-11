@@ -91,11 +91,11 @@ const ApplyLoanScreen = ({ navigation }: any) => {
       
       {/* HEADER */}
       <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.primary} />
-        </TouchableOpacity> */}
-
-        <AppText style={styles.title}>Apply Loan</AppText>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        </TouchableOpacity>
+        <AppText style={styles.headerTitle}>Apply Loan</AppText>
+        <View style={{ width: 24 }} />
       </View>
 
       {/* FORM CARD */}

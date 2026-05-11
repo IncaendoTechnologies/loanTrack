@@ -11,6 +11,7 @@ import { createUser, getUserByIdOrNull } from '../apis/userApi';
 import LoanTrackLogo from '../components/LoanTrackLogo';
 import type { CognitoUser } from '../types/types';
 import styles from '../stylesheets/SignInStyles';
+import { UserPayload } from 'src/interfaces/user';
 
 const SignInScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
@@ -38,7 +39,7 @@ const SignInScreen = ({ navigation }: any) => {
     }
 
     try {
-      await createUser(payload);
+      await createUser(payload as UserPayload);
     } catch (createError) {
       console.log('Create backend user after sign-in error:', createError);
     }

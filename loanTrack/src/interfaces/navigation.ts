@@ -31,4 +31,6 @@ export type RootStackParamList = {
   PaymentSchedule: PaymentScheduleParams;
   ConfirmPayment: undefined;
   AddMoney: undefined;
+  Schedule: undefined;
+  Transaction: undefined;
 };

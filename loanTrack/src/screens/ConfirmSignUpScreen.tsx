@@ -158,6 +158,7 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
   const handleResendCode = async () => {
     try {
       const normalizedEmail = email.trim().toLowerCase();
+      console.log('Resending code to:', normalizedEmail);
       await Auth.resendSignUp(normalizedEmail);
       ToastAndroid.show('Success: Verification code sent.', ToastAndroid.SHORT);
     } catch (error) {

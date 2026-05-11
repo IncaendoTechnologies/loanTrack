@@ -48,7 +48,7 @@ class TransactionController {
   static async getAllTransactions(req: AuthenticatedRequest, res: Response) {
     try {
       const owner = req.auth?.sub;
-
+      console.log("Fetching transactions for owner:", owner);
       if (!owner) {
         return res.status(401).json({ error: "Unauthorized user" });
       }

@@ -8,12 +8,21 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
+  backBtn: {
+    padding: 4,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'space-between',
+    // paddingTop: 10,
+    // paddingBottom: 20,
   },
-
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+  },
   title: {
     fontSize: 18,
     fontWeight: '600',

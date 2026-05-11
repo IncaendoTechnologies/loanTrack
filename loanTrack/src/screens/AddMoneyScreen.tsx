@@ -82,7 +82,7 @@ const AddMoneyScreen = ({ navigation }: any) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <AppText style={styles.headerTitle}>Add Money</AppText>
+        <AppText style={styles.headerTitle}>Add Money </AppText>
         <View style={{ width: 24 }} />
       </View>
 

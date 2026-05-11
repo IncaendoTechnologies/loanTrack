@@ -13,20 +13,18 @@ export default StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: COLORS.card,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   backBtn: {
     padding: 4,
   },
+  
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.text,
   },
   content: {
-    padding: 20,
+    padding: 16,
   },
   balanceCard: {
     backgroundColor: COLORS.primary,

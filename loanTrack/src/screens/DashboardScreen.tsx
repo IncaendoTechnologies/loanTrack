@@ -1,12 +1,12 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { getUserById } from '../apis/userApi';
@@ -29,6 +29,7 @@ const DashboardScreen = ({ navigation }: any) => {
   const [loans, setLoans] = useState<LoanRecord[]>([]);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [loadingLoans, setLoadingLoans] = useState(true);
+  const [usedLoanAmount, setUsedLoanAmount] = useState(0);
   const [error, setError] = useState('');
 
   const loadDashboard = async () => {
@@ -43,7 +44,8 @@ const DashboardScreen = ({ navigation }: any) => {
         getAllLoans(),
         getWalletStatus(cognitoSub),
       ]);
-
+      console.log('Dashboard Data:', { walletStatus });
+      setUsedLoanAmount(walletStatus.usedLoanAmount);
       setUserName(`${profile.firstName} ${profile.lastName}`.trim());
       setLoanLimit(profile.loanLimit || 0);
       setLoans(loanResult);
@@ -86,7 +88,7 @@ const DashboardScreen = ({ navigation }: any) => {
 
   return (
     <ScrollView style={styles.container}>
-      
+
       {/* HEADER */}
       <View style={styles.header}>
         <View>
@@ -107,20 +109,14 @@ const DashboardScreen = ({ navigation }: any) => {
 
       {/* MAIN CARD */}
       <View style={styles.mainCard}>
-        <AppText style={styles.label}>Borrow Limit</AppText>
-
-        <AppText style={styles.amount}>
-          ₹ {formatCurrencyIN(loanLimit)}
-        </AppText>
-
         <View style={styles.mainBottom}>
           <View>
-            <AppText style={styles.label}>Remaining Limit</AppText>
-            <AppText style={styles.amountSmall}>
-              ₹ {formatCurrencyIN(remainingAmount)}
+            <AppText style={styles.label}>Borrow Limit</AppText>
+
+            <AppText style={styles.amount}>
+              ₹ {formatCurrencyIN(loanLimit)}
             </AppText>
           </View>
-
           <TouchableOpacity
             style={styles.applyBtn}
             onPress={() => navigation.navigate('Apply')}
@@ -128,6 +124,21 @@ const DashboardScreen = ({ navigation }: any) => {
             <Ionicons name="add" size={16} color={COLORS.primary} />
             <AppText style={styles.applyText}>Apply</AppText>
           </TouchableOpacity>
+
+        </View>
+        <View style={styles.mainWallet}>
+          <View>
+            <AppText style={styles.label}>Remaining Limit</AppText>
+            <AppText style={styles.amountSmall}>
+              ₹ {formatCurrencyIN(remainingAmount)}
+            </AppText>
+          </View>
+          <View>
+            <AppText style={styles.label}>Used by wallet</AppText>
+            <AppText style={styles.amountSmall}>
+              ₹ {formatCurrencyIN(usedLoanAmount)}
+            </AppText>
+          </View>
         </View>
       </View>
 
@@ -169,8 +180,10 @@ const DashboardScreen = ({ navigation }: any) => {
           Recent Loans
         </AppText>
 
-        <TouchableOpacity>
-          <AppText style={styles.link}>View All</AppText>
+        <TouchableOpacity onPress={() => navigation.navigate('Schedule')}>
+          <AppText style={styles.link} >
+            View All
+          </AppText>
         </TouchableOpacity>
       </View>
 
@@ -180,7 +193,7 @@ const DashboardScreen = ({ navigation }: any) => {
         </View>
       ) : error ? (
         <View style={styles.empty}>
-          <AppText>{error}</AppText>
+          <AppText>Something went wrong</AppText>
         </View>
       ) : recentLoans.length === 0 ? (
         <View style={styles.empty}>

@@ -112,7 +112,7 @@ const WalletScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <AppText style={styles.headerTitle}>My Wallet</AppText>
@@ -184,7 +184,7 @@ const WalletScreen = ({ navigation }: any) => {
         animationType="slide"
         onRequestClose={() => setTransferVisible(false)}
       >
-        <View style={{ flex: 1, backgroundColor: COLORS.background, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <View style={{ backgroundColor: COLORS.card, width: '100%', borderRadius: 15, padding: 20, borderWidth: 1, borderColor: COLORS.border }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <AppText style={{ fontSize: 18, fontWeight: 'bold', color: COLORS.text }}>Transfer to Loan Limit</AppText>
