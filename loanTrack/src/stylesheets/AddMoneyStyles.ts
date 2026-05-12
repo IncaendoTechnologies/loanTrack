@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   limitValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: COLORS.primary,
   },

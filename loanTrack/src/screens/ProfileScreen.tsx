@@ -108,7 +108,7 @@ const ProfileScreen = ({ navigation }: any) => {
   };
 
   const renderItem = (icon: any, label: string, color: string, type: string, onPress?: () => void) => (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
+    <TouchableOpacity style={[styles.item]} onPress={onPress}>
       <View style={styles.itemLeft}>
 
         <View style={[styles.iconCircle, { backgroundColor: color + '20' }]}>
@@ -134,7 +134,7 @@ const ProfileScreen = ({ navigation }: any) => {
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container]}>
       <View >
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
@@ -163,7 +163,7 @@ const ProfileScreen = ({ navigation }: any) => {
       </View>
 
       {/* SETTINGS CARD */}
-      <View style={styles.card}>
+      <View style={[styles.card, styles.borderColorLeft]}>
         <AppText style={styles.cardTitle}>
           Account Settings
         </AppText>

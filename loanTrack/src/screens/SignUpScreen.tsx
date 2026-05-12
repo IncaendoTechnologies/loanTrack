@@ -75,6 +75,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
 
       <TextInput
         placeholder="First Name"
+        placeholderTextColor="#999"
         style={styles.input}
         value={firstName}
         onChangeText={setFirstName}
@@ -82,6 +83,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
 
       <TextInput
         placeholder="Last Name"
+        placeholderTextColor="#999"
         style={styles.input}
         value={lastName}
         onChangeText={setLastName}
@@ -89,6 +91,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
 
       <TextInput
         placeholder="Email"
+        placeholderTextColor="#999"
         style={styles.input}
         value={email}
         onChangeText={setEmail}
@@ -96,6 +99,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
 
       <TextInput
         placeholder="Mobile (+91...)"
+        placeholderTextColor="#999"
         style={styles.input}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
@@ -103,6 +107,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
 
       <TextInput
         placeholder="Password"
+        placeholderTextColor="#999"
         secureTextEntry
         style={styles.input}
         value={password}

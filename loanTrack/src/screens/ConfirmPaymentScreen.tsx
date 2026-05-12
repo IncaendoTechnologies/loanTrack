@@ -129,6 +129,7 @@ const ConfirmPaymentScreen = ({ navigation, route }: any) => {
           <TextInput
             style={[styles.input, route.params?.transactionId && styles.disabledInput]}
             placeholder="txn_..."
+            placeholderTextColor="#999"
             value={transactionId}
             onChangeText={setTransactionId}
             autoCapitalize="none"
@@ -143,6 +144,7 @@ const ConfirmPaymentScreen = ({ navigation, route }: any) => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter 6-digit OTP"
+                placeholderTextColor="#999"
                 value={otp}
                 onChangeText={setOtp}
                 keyboardType="number-pad"

@@ -48,7 +48,7 @@ export class WalletController {
   // ✅ Debit API
   public debitWallet = async (req: Request, res: Response) => {
     try {
-      const { userId, amount } = req.body;
+      const { userId, amount, receiverId } = req.body;
 
       // Step 1: Validate request
       if (!userId || !amount || amount <= 0) {
@@ -80,6 +80,12 @@ export class WalletController {
         calculation.updatedUsedLoanAmount
       );
 
+      // Fetch receiver if provided
+      let receiver;
+      if (receiverId) {
+        receiver = await this.walletService.getUserById(receiverId);
+      }
+
       // Log transaction
       const transactionService = new TransactionServices({
         owner: userId,
@@ -88,7 +94,17 @@ export class WalletController {
         type: "WALLET_TRANSFER",
         date: new Date().toISOString(),
         status: "SUCCESS",
-        note: "Payment to User"
+        note: receiver ? `Payment to ${receiver.firstName}` : "Payment to User",
+        sender: {
+          userId: user.id,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          email: user.email,
+        },
+        receiver: receiver ? {
+          userId: receiver.id,
+          name: `${receiver.firstName} ${receiver.lastName}`.trim(),
+          email: receiver.email,
+        } : undefined,
       });
       await transactionService.createTransaction();
 
@@ -111,7 +127,7 @@ export class WalletController {
   // ✅ Credit API
   public creditWallet = async (req: Request, res: Response) => {
     try {
-      const { userId, amount } = req.body;
+      const { userId, amount, senderId } = req.body;
 
       // Step 1: Validate request
       if (!userId || !amount || amount <= 0) {
@@ -138,6 +154,12 @@ export class WalletController {
         user.usedLoanAmount || 0
       );
 
+      // Fetch sender if provided
+      let sender;
+      if (senderId) {
+        sender = await this.walletService.getUserById(senderId);
+      }
+
       // Log transaction
       const transactionService = new TransactionServices({
         owner: userId,
@@ -146,7 +168,17 @@ export class WalletController {
         type: "WALLET_TRANSFER",
         date: new Date().toISOString(),
         status: "SUCCESS",
-        note: "Received Money"
+        note: sender ? `Received from ${sender.firstName}` : "Received Money",
+        sender: sender ? {
+          userId: sender.id,
+          name: `${sender.firstName} ${sender.lastName}`.trim(),
+          email: sender.email,
+        } : undefined,
+        receiver: {
+          userId: user.id,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          email: user.email,
+        },
       });
       await transactionService.createTransaction();
 

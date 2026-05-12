@@ -1,11 +1,11 @@
 import { Auth } from 'aws-amplify';
 import React, { useState } from 'react';
 import {
-    ToastAndroid,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ToastAndroid,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { createUser, getUserByIdOrNull } from '../apis/userApi';
 import LoanTrackLogo from '../components/LoanTrackLogo';
@@ -99,23 +99,21 @@ const SignInScreen = ({ navigation }: any) => {
         <LoanTrackLogo width={160} height={80} />
       </View>
       <Text style={styles.title}>Sign In</Text>
-      
-
       <TextInput
         placeholder="Email"
+        placeholderTextColor="#999"
         style={styles.input}
         value={email}
         onChangeText={setEmail}
       />
-
       <TextInput
         placeholder="Password"
+        placeholderTextColor="#999"
         secureTextEntry
         style={styles.input}
         value={password}
         onChangeText={setPassword}
       />
-
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleSignIn}

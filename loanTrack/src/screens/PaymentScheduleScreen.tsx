@@ -88,7 +88,7 @@ const PaymentScheduleScreen = ({ route, navigation }: any) => {
         keyExtractor={(item) => item.month.toString()}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <View style={[styles.card, styles.borderColorLeft]}>
             <AppText style={styles.month}>#{item.month}</AppText>
 
             <AppText style={styles.text}>

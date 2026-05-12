@@ -130,32 +130,32 @@ const WalletScreen = ({ navigation }: any) => {
         {/* Main Balance Card */}
         <View style={styles.balanceCard}>
           <AppText style={styles.balanceLabel}>Available Wallet Balance</AppText>
-          <AppText style={styles.balanceValue}>
+          <AppText style={styles.balanceValue} numberOfLines={1} adjustsFontSizeToFit>
             {formatCurrency(wallet?.walletBalance || 0)}
           </AppText>
         </View>
 
         {/* Stats Row */}
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, styles.borderColorLeft]}>
             <AppText style={styles.statLabel}>Total Loan Limit</AppText>
-            <AppText style={styles.statValue}>
+            <AppText style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
               {formatCurrency(wallet?.loanLimit || 0)}
             </AppText>
           </View>
 
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, styles.borderColorLeft]}>
             <AppText style={styles.statLabel}>Available Credit</AppText>
-            <AppText style={styles.statValue}>
+            <AppText style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
               {formatCurrency(wallet?.availableCredit || 0)}
             </AppText>
           </View>
         </View>
 
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, styles.borderColorLeft]}>
             <AppText style={styles.statLabel}>Used Loan Amount</AppText>
-            <AppText style={styles.statValue}>
+            <AppText style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
               {formatCurrency(wallet?.usedLoanAmount || 0)}
             </AppText>
           </View>
@@ -164,13 +164,13 @@ const WalletScreen = ({ navigation }: any) => {
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <TouchableOpacity 
-            style={styles.actionBtn}
+            style={[styles.actionBtn, styles.borderColorLeft]}
             onPress={() => navigation.navigate('AddMoney')}
           >
             <Ionicons name="add-circle-outline" size={24} color={COLORS.primary} />
             <AppText style={styles.actionText}>Add Money</AppText>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn} onPress={() => setTransferVisible(true)}>
+          <TouchableOpacity style={[styles.actionBtn, styles.borderColorLeft]} onPress={() => setTransferVisible(true)}>
             <Ionicons name="swap-horizontal-outline" size={24} color={COLORS.primary} />
             <AppText style={styles.actionText}>Transfer</AppText>
           </TouchableOpacity>

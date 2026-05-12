@@ -103,6 +103,7 @@ const AddMoneyScreen = ({ navigation }: any) => {
             <TextInput
               style={styles.input}
               placeholder="0"
+              placeholderTextColor="#999"
               keyboardType="numeric"
               value={amount}
               onChangeText={setAmount}

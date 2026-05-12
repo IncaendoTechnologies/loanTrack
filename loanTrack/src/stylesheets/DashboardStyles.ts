@@ -7,7 +7,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     padding: 16,
   },
-
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
   },
 
   amount: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
     marginTop: 4,
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
   mainWallet: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
+
     marginTop: 16,
     alignItems: 'center',
   },
@@ -107,6 +110,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  paymentCard: {
+    width: '48%',
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
+  },
+  paymentCardIcon: {
+    backgroundColor: '#EFF6FF',
+    padding: 8,
+    borderRadius: 10,
+  },
+  paymentCardTitle: {
+    fontWeight: '700',
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  paymentCardSub: {
+    fontSize: 10,
+    color: '#777',
+    marginTop: 2,
+  },
   smallLabel: {
     fontSize: 12,
     color: '#777',

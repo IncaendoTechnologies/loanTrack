@@ -6,6 +6,10 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -17,7 +21,7 @@ export default StyleSheet.create({
   backBtn: {
     padding: 4,
   },
-  
+
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -44,7 +48,7 @@ export default StyleSheet.create({
   },
   balanceValue: {
     color: '#FFF',
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   statsRow: {

@@ -1,11 +1,11 @@
-export interface Transaction {
+export interface ApiTransaction {
   owner: string;
   transactionId: string;
   loanId?: string;
   amount: number;
-  type: 'PAYMENT' | 'DISBURSEMENT' | 'INTEREST' | 'FEE' | 'REFUND' | 'CHARGE' | 'ADJUSTMENT' | 'WALLET_TRANSFER' | 'REPAYMENT';
+  type: string;
   date: string;
-  status?: 'SUCCESS' | 'FAILED' | 'PENDING';
+  status?: string;
   note?: string;
   sender?: {
     name: string;

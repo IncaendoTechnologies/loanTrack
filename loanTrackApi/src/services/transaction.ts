@@ -30,6 +30,8 @@ class TransactionServices {
   date: string;
   status?: "SUCCESS" | "FAILED" | "PENDING";
   note?: string;
+  sender?: { name: string; email: string; userId: string };
+  receiver?: { name: string; email: string; userId: string };
 
   private static indexesChecked = false;
   private static hasOwnerIndex = false;
@@ -44,6 +46,8 @@ class TransactionServices {
     this.date = transaction.date;
     this.status = transaction.status;
     this.note = transaction.note;
+    this.sender = transaction.sender;
+    this.receiver = transaction.receiver;
   }
 
   // ✅ Load Index Info
@@ -83,6 +87,8 @@ class TransactionServices {
         date: this.date,
         status: this.status,
         note: this.note,
+        sender: this.sender,
+        receiver: this.receiver,
       },
     };
 

@@ -179,6 +179,7 @@ const ConfirmSignUpScreen = ({ route, navigation }: any) => {
 
       <TextInput
         placeholder="Enter OTP"
+        placeholderTextColor="#999"
         style={styles.input}
         value={code}
         onChangeText={setCode}

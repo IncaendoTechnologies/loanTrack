@@ -16,9 +16,9 @@ Amplify.configure(amplifyConfig);
 
 export default function App() {
   const [loaded] = useFonts({
-    PoppinsRegular: require('./assets/fonts/Poppins-Regular.ttf'),
-    PoppinsMedium: require('./assets/fonts/Poppins-Medium.ttf'),
-    PoppinsBold: require('./assets/fonts/Poppins-Bold.ttf'),
+    PoppinsRegular: require('./assets/fonts/PoppinsRegular.ttf'),
+    PoppinsMedium: require('./assets/fonts/PoppinsMedium.ttf'),
+    PoppinsBold: require('./assets/fonts/PoppinsBold.ttf'),
   });
 
   const linking = {

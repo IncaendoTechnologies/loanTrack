@@ -233,7 +233,8 @@ export class PaymentController {
       const debitSuccess = await this.debitWallet(
         senderUserId,
         txn.amount,
-        authHeader
+        authHeader,
+        txn.toUserId
       );
 
       if (!debitSuccess) {
@@ -247,7 +248,8 @@ export class PaymentController {
       const creditSuccess = await this.creditWallet(
         txn.toUserId,
         txn.amount,
-        authHeader
+        authHeader,
+        senderUserId
       );
 
       if (!creditSuccess) {
@@ -287,7 +289,7 @@ export class PaymentController {
     }
   };
 
-  private async debitWallet(userId: string, amount: number, authHeader: string): Promise<boolean> {
+  private async debitWallet(userId: string, amount: number, authHeader: string, receiverId?: string): Promise<boolean> {
     console.log(`Debiting ₹${amount} from ${userId}`);
     try {
       const loanTrackApiUrl = process.env.LOAN_TRACK_API_URL || "http://localhost:3000";
@@ -297,7 +299,7 @@ export class PaymentController {
           "Content-Type": "application/json",
           Authorization: `Bearer ${generateServiceToken()}`,
         },
-        body: JSON.stringify({ userId, amount }),
+        body: JSON.stringify({ userId, amount, receiverId }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
@@ -311,7 +313,7 @@ export class PaymentController {
     }
   }
 
-  private async creditWallet(userId: string, amount: number, authHeader: string): Promise<boolean> {
+  private async creditWallet(userId: string, amount: number, authHeader: string, senderId?: string): Promise<boolean> {
     console.log(`Crediting ₹${amount} to ${userId}`);
     try {
       const loanTrackApiUrl = process.env.LOAN_TRACK_API_URL || "http://localhost:3000";
@@ -322,7 +324,7 @@ export class PaymentController {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userId, amount }),
+        body: JSON.stringify({ userId, amount, senderId }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {

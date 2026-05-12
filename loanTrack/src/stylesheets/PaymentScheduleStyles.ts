@@ -62,7 +62,10 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
   },
-
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   month: {
     flex: 1,
     color: COLORS.primary,

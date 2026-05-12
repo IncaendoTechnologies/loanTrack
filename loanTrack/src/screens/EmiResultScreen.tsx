@@ -147,7 +147,11 @@ const renderRow = (label: string, value: string, highlight = false, primary = fa
       style={{
         fontWeight: '600',
         color: primary ? COLORS.primary : '#000',
+        flexShrink: 1,
+        textAlign: 'right',
       }}
+      numberOfLines={1}
+      adjustsFontSizeToFit
     >
       {value}
     </AppText>

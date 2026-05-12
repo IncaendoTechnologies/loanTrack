@@ -28,7 +28,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.primary,
   },
-
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   card: {
     backgroundColor: '#fff',
     padding: 16,

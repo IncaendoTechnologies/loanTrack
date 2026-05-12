@@ -99,7 +99,7 @@ const ApplyLoanScreen = ({ navigation }: any) => {
       </View>
 
       {/* FORM CARD */}
-      <View style={styles.card}>
+      <View style={[styles.card, styles.borderColorLeft]}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
           <AppText style={styles.cardTitle}>Loan Details</AppText>
           <View style={{ backgroundColor: COLORS.card, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: COLORS.border }}>
@@ -115,6 +115,7 @@ const ApplyLoanScreen = ({ navigation }: any) => {
           <TextInput
             style={styles.input}
             placeholder="e.g. 100000"
+            placeholderTextColor="#999"
             keyboardType="numeric"
             value={amount}
             onChangeText={setAmount}
@@ -127,6 +128,7 @@ const ApplyLoanScreen = ({ navigation }: any) => {
           <TextInput
             style={styles.input}
             placeholder="e.g. 10.5"
+            placeholderTextColor="#999"
             keyboardType="numeric"
             value={interest}
             onChangeText={setInterest}
@@ -139,6 +141,7 @@ const ApplyLoanScreen = ({ navigation }: any) => {
           <TextInput
             style={styles.input}
             placeholder="e.g. 12"
+            placeholderTextColor="#999"
             keyboardType="numeric"
             value={duration}
             onChangeText={setDuration}
