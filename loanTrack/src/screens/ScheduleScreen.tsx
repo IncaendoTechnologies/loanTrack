@@ -68,7 +68,7 @@ const ScheduleScreen = ({ navigation }: any) => {
           }
         >
           {error ? (
-            <View style={styles.center}>
+            <View style={[styles.center]}>
               <AppText style={styles.errorText}>{error}</AppText>
             </View>
           ) : loans.length === 0 ? (
@@ -79,7 +79,7 @@ const ScheduleScreen = ({ navigation }: any) => {
             loans.map((item) => (
               <TouchableOpacity
                 key={item.loanId}
-                style={styles.row}
+                style={[styles.row, styles.borderColorLeft]}
                 onPress={() =>
                   navigation.navigate('EmiResult', {
                     loan: item,

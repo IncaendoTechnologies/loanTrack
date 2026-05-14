@@ -23,6 +23,23 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
   },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    marginBottom: 15,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+
+  passwordInput: {
+    flex: 1,
+    height: 40,
+  },
+
+  eyeText: {
+    fontSize: 15,
+  },
   button: {
     backgroundColor: '#007bff',
     padding: 15,

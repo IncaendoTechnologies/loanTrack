@@ -14,7 +14,10 @@ const styles = StyleSheet.create({
     padding: 16,
     // backgroundColor: '#fff',
   },
-
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   title: {
     fontSize: 16,
     fontWeight: '600',

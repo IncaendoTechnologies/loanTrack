@@ -13,7 +13,7 @@ const resolveApiBaseUrl = () => {
   const easHost = extractHost((Constants as any).expoGoConfig?.debuggerHost);
   const host = expoConfigHost || expoGoHost || legacyManifestHost || easHost;
 
-  if (host) return `http://${host.replace(/:\d+$/, '')}:8000`;
+  if (host) return `https://loantrackapi.onrender.com`;
   return '';
 };
 
@@ -21,9 +21,9 @@ const normalizeBaseUrl = (url?: string) => (url ? url.replace(/\/+$/, '') : '');
 
 const getPlatformHost = () => {
   if (Platform.OS === 'android') {
-    return "http://10.0.2.2:8000";
+    return "https://loantrackapi.onrender.com";
   }
-  return 'http://127.0.0.1:8000';
+  return 'https://loantrackapi.onrender.com';
 };
 
 const getApiBaseUrl = () => {

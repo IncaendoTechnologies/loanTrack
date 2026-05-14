@@ -5,6 +5,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
 } from 'react-native';
 import { Auth } from 'aws-amplify';
 import LoanTrackLogo from '../components/LoanTrackLogo';
@@ -23,6 +28,7 @@ const SignUpScreen = ({ navigation, route }: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSignUp = async () => {
@@ -66,68 +72,88 @@ const SignUpScreen = ({ navigation, route }: any) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.brandContainer}>
-        <LoanTrackLogo width={160} height={80} />
-      </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} showsVerticalScrollIndicator={false}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View>
+            <View style={styles.brandContainer}>
+              <LoanTrackLogo width={160} height={80} />
+            </View>
 
-      <Text style={styles.title}>Create Account</Text>
+            <Text style={styles.title}>Create Account</Text>
 
-      <TextInput
-        placeholder="First Name"
-        placeholderTextColor="#999"
-        style={styles.input}
-        value={firstName}
-        onChangeText={setFirstName}
-      />
+            <TextInput
+              placeholder="First Name"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={firstName}
+              onChangeText={setFirstName}
+            />
 
-      <TextInput
-        placeholder="Last Name"
-        placeholderTextColor="#999"
-        style={styles.input}
-        value={lastName}
-        onChangeText={setLastName}
-      />
+            <TextInput
+              placeholder="Last Name"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={lastName}
+              onChangeText={setLastName}
+            />
 
-      <TextInput
-        placeholder="Email"
-        placeholderTextColor="#999"
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-      />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-      <TextInput
-        placeholder="Mobile (+91...)"
-        placeholderTextColor="#999"
-        style={styles.input}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-      />
+            <TextInput
+              placeholder="Mobile (+91...)"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
 
-      <TextInput
-        placeholder="Password"
-        placeholderTextColor="#999"
-        secureTextEntry
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-      />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="#999"
+                secureTextEntry={!showPassword}
+                style={styles.passwordInput}
+                value={password}
+                onChangeText={setPassword}
+              />
 
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={handleSignUp}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>{loading ? 'Signing up...' : 'Sign Up'}</Text>
-      </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Text style={styles.eyeText}>
+                  {showPassword ? '🙈' : '👁️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>{loading ? 'Signing up...' : 'Sign Up'}</Text>
+            </TouchableOpacity>
 
-      <Text onPress={() => navigation.navigate('SignIn')}>
-        Already have an account? Sign In
-      </Text>
-    </View>
+            {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+            <Text onPress={() => navigation.navigate('SignIn')}>
+              Already have an account? Sign In
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

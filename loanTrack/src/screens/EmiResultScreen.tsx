@@ -2,10 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
 import {
-    ToastAndroid,
-    ScrollView,
-    TouchableOpacity,
-    View,
+  ToastAndroid,
+  ScrollView,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { createLoan } from '../apis/loanApi';
@@ -67,10 +67,7 @@ const EmiResultScreen = ({ route, navigation }: any) => {
         </TouchableOpacity>
 
         <AppText style={styles.title}>EMI Result</AppText>
-
-        <TouchableOpacity>
-          <Ionicons name="share-social-outline" size={20} color={COLORS.primary} />
-        </TouchableOpacity>
+        <View style={{ width: 24 }} />
       </View>
 
       {/* EMI RESULT */}
@@ -90,7 +87,7 @@ const EmiResultScreen = ({ route, navigation }: any) => {
       </View>
 
       {/* SUMMARY CARD */}
-      <View style={styles.card}>
+      <View style={[styles.card, styles.borderColorLeft]}>
         <AppText style={styles.cardTitle}>Loan Summary</AppText>
 
         {renderRow('Loan Amount', `₹${loan.amount.toLocaleString()}`)}

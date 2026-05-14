@@ -7,7 +7,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     padding: 16,
   },
-
+  borderColorLeft: {
+    borderLeftColor: COLORS.primary,
+    borderLeftWidth: 3,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
